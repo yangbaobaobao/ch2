@@ -1,16 +1,99 @@
 import java.util.*;
 class Main {
+	public static Scanner sc;
 	public static List<Person> Contenders = new ArrayList<Person>();
+	public static Person character;
     public static void main(String[] args) {
+		sc = new Scanner(System.in);
         System.out.println("Gladiator Battles At Home:");
         Contenders.add(new Person("Ethan", 120, 1, 1));
         Contenders.add(new Person("Ryan", 100, 10, 15));
         Contenders.add(new Person("Jiahao", 1000, 4000, 17));
         for (Person p : Contenders){
 			p.Declare();
+			p.AddAttack(new Attack("punch",30));
+			p.AddAttack(new Attack("kick", 50));
 		}
-        Contenders.get(0).Fight(Contenders.get(1));
+        //Contenders.get(0).Fight(Contenders.get(1));
+        boolean proceed = false;
+        String s;
+        while(!proceed){
+			System.out.println("Select your gladiator: ");
+			s = sc.nextLine();
+			for (Person p : Contenders){
+				if (p.name.toLowerCase().equals(s.toLowerCase())){
+					character = p;
+					proceed = true;
+					System.out.println(p.name + ": Yay! Im selected!");
+				}
+			}
+		} 
+		Ask();
     }
+    
+    public static void Fight(Person enemy) {
+		System.out.print("Choose Action: ");
+		for (Attack att : character.attacks){
+			System.out.print(att.name + " ");
+		}
+		System.out.println("");
+		String s = sc.nextLine();
+		s = s.toLowerCase();
+		for (Attack att : character.attacks){
+			if (s.equals(att.name.toLowerCase())){
+				System.out.println(character.name + " " + att.name + "ed " + enemy.name + "!");
+				Fight(enemy);
+			}
+		}
+		System.out.println("ATTACK NOT FOUND");
+		Fight(enemy);
+	}
+    
+    public static void Ask() {
+		System.out.print("Choose Action: ");
+		System.out.print("inspect ");
+		System.out.print("fight ");
+		System.out.print("train ");
+		System.out.print("cheer ");
+		System.out.println("");
+		String s = sc.nextLine();
+		s = s.toLowerCase();
+		if (s.equals("inspect")) {
+			character.Declare();
+			Ask();
+		}
+		else if (s.split(" ")[0].equals("fight")) {
+			if (s.split(" ").length == 1){
+				System.out.println("INCORRECT SYNTAX: fight [name of enemy]");
+				Ask();
+			}
+			for (Person p : Contenders){
+				if (p.name.toLowerCase().equals(s.split(" ")[1])){
+					if (p.name.equals(character.name)) {
+						System.out.println("YOU CANT ATTACK YOURSELF");
+						Ask();
+					}
+					else {
+						character.Fight(p);
+						Fight(p);
+					}
+				}
+			}
+			System.out.println("INCORRECT SYNTAX: fight [name of enemy]");
+			Ask();
+		}
+		else{Ask();}
+	}
+}
+
+class Attack {
+	public String name;
+	public int damage;
+	
+	Attack(String name, int damage) {
+		this.name = name;
+		this.damage = damage;
+	}
 }
 
 class Person {
@@ -19,6 +102,9 @@ class Person {
 	protected double experience;
 	protected double age;
     private double ageAffinity;
+    
+    public List<Attack> attacks = new ArrayList<Attack>();
+    
 	Person(String name, int iq, double experience, double age){
 		this.name = name;
 		this.iq = iq;
@@ -26,8 +112,12 @@ class Person {
 		this.age = age;
         this.ageAffinity = (-0.02*(this.age - 20)*(this.age - 40) + 18);
 	}
+	
+	public void AddAttack(Attack attack){
+		attacks.add(attack);
+	}
 
-    public double getAgeAffinity(){
+    public double GetAgeAffinity(){
         return ageAffinity;
     }
 	
