@@ -6,13 +6,13 @@ class Main {
     public static void main(String[] args) {
 		sc = new Scanner(System.in);
         System.out.println("Gladiator Battles At Home:");
-        Contenders.add(new Person("Ethan", 120, 1, 1));
+        Contenders.add(new Person("Ethan", 125, 1, 1));
         Contenders.add(new Person("Ryan", 100, 10, 15));
         Contenders.add(new Person("Jiahao", 1000, 4000, 17));
         for (Person p : Contenders){
 			p.Declare();
-			p.AddAttack(new Attack("punch",30));
-			p.AddAttack(new Attack("kick", 50));
+			p.AddAttack(new Attack("punch", p, 1.0, 30));
+			p.AddAttack(new Attack("kick", p, 0.5, 50));
 		}
         //Contenders.get(0).Fight(Contenders.get(1));
         boolean proceed = false;
@@ -41,7 +41,7 @@ class Main {
 		s = s.toLowerCase();
 		for (Attack att : character.attacks){
 			if (s.equals(att.name.toLowerCase())){
-				System.out.println(character.name + " " + att.name + "ed " + enemy.name + "!");
+				att.Hit(enemy);
 				Fight(enemy);
 			}
 		}
@@ -89,10 +89,26 @@ class Main {
 class Attack {
 	public String name;
 	public int damage;
+	public double hitRate;
 	
-	Attack(String name, int damage) {
+	public Person parent;
+	
+	Attack(String name, Person parent, double hitRate, int damage) {
 		this.name = name;
 		this.damage = damage;
+		this.hitRate = hitRate;
+		this.parent = parent;
+	}
+	
+	public boolean Hit(Person enemy){
+		if (Math.random() > hitRate){
+			System.out.println(parent.name + " tried to " + name + " " + enemy.name + ", but missed...");
+			return false;
+		}
+		else{
+			System.out.println(parent.name + " " + name + "ed " + enemy.name + "!");
+			return true;
+		}
 	}
 }
 
