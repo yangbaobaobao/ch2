@@ -16,11 +16,11 @@ class Main {
         Contenders.add(new Person("Jiahao", 1000, 4000, 17));
         for (Person p : Contenders){
 			p.Declare();
-			p.AddAttack(new Attack("punch", p, 1.0, 0, 30));
-			p.AddAttack(new Attack("kick", p, 0.5, 0, 50));
-			p.AddAttack(new Attack("slap", p, 0.9, 0.5, 15));
+			p.AddAttack(new Attack("punch", p, 1, 0, 30,3));
+			p.AddAttack(new Attack("kick", p, 1, 0, 50,1));
+			p.AddAttack(new Attack("slap", p, 1, 0.5, 15,4));
 			if (p.name.equals("Ethan")) {
-				p.AddAttack(new Attack("kiss", p, 0.4, 1, 5));
+				p.AddAttack(new Attack("kiss", p, 0.4, 1, 100,1));
 			}
 		}
         //Contenders.get(0).Fight(Contenders.get(1));
@@ -100,15 +100,17 @@ class Attack {
 	public int damage;
 	public double hitRate;
 	public double reloadRate;
+	public int hitZone;
 	
 	public Person parent;
 	
-	Attack(String name, Person parent, double hitRate, double reloadRate, int damage) {
+	Attack(String name, Person parent, double hitRate, double reloadRate, int damage, int hitZone) {
 		this.name = name;
 		this.damage = damage;
 		this.hitRate = hitRate;
 		this.reloadRate = reloadRate;
 		this.parent = parent;
+		this.hitZone = hitZone;
 	}
 	
 	public static void DeleteLine() {
@@ -117,7 +119,7 @@ class Attack {
     }
 	
 	public boolean Hit(Person enemy){
-		boolean[] bar = new boolean[10];
+		boolean[] bar = new boolean[20];
 		int barPos = 0;
 		bar[barPos] = true;
 		boolean gaba = true;
@@ -127,20 +129,25 @@ class Attack {
 			timer++;
 			try {
 				DeleteLine();
+				int j = 0;
 				for (boolean b : bar) {
+					j++;
 					if (b){
 						System.out.print("[X]");}
 					else{
-						System.out.print("[ ]");}
+							if (Math.abs(j - 10) <= hitZone)
+								System.out.print("[O]");
+							else
+								System.out.print("[ ]");
+						}
 				}
-				barPos = (int)(5*Math.sin(timer) + 5);
-				System.out.print(barPos);
+				barPos = (timer % 20);
 				//barPos++;
 				for (int i = 0; i < bar.length; i++) {
 					bar[i] = false;}
 				bar[barPos] = true;
 				if (barPos >= 10) {barPos = 0;}
-				Thread.sleep(100);
+				Thread.sleep(50);
 			}
 			catch (Exception e){}
 		}
